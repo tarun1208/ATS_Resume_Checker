@@ -73,7 +73,7 @@ def get_ats_analysis(resume_text, jd_text):
             'response_mime_type': 'application/json',
         }
     )
-    
+#hello 
     # The new SDK returns the response text directly; we parse it to JSON
     return json.loads(response.text)
 
