@@ -1,110 +1,99 @@
+
+
+
+from flask import Flask, request, jsonify, render_template
+from google import genai
+import PyPDF2
 import os
-import json
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-from google import genai 
 from dotenv import load_dotenv
 
-# ==============================
-# CONFIG & AUTH
-# ==============================
 load_dotenv()
 
-# Get the key from .env
-API_KEY = os.getenv("GEMINI_API_KEY")
-
-if not API_KEY:
-    print("CRITICAL ERROR: Gemini API Key is missing in your .env file.")
-    # For local testing fallback (Not recommended for production)
-    API_KEY = "YOUR_ACTUAL_API_KEY_HERE"
-
-# Initialize the modern Gemini Client
-try:
-    client = genai.Client(api_key=API_KEY)
-    print("Neural Engine: Successfully authenticated with Google GenAI SDK.")
-except Exception as e:
-    print(f"Neural Engine: Initialization failed. Error: {str(e)}")
-
 app = Flask(__name__)
-# Enable CORS for frontend communication
-CORS(app)
 
-# ==============================
-# UTILITY ROUTES
-# ==============================
-@app.route("/", methods=["GET"])
-def home():
-    """Root route to verify server status."""
-    return jsonify({
-        "status": "online",
-        "engine": "OptiScan Elite Neural Backend",
-        "message": "Send POST requests to /api/analyze"
-    })
+# Fetch the key securely
+# If the key isn't found, this will return None and avoid crashing immediately
+api_key = os.getenv("GEMINI_API_KEY")
 
-# ==============================
-# NEURAL ENGINE LOGIC
-# ==============================
-def get_ats_analysis(resume_text, jd_text):
-    """
-    Uses Gemini 2.5 Flash via the new SDK to perform analysis.
-    """
-    prompt = f"""
-    Act as a cynical, high-stakes Fortune 500 Executive Recruiter. 
-    Analyze the following RESUME against the JOB DESCRIPTION.
-    
-    RESUME:
-    {resume_text}
+if not api_key:
+    raise ValueError("No API key found. Please set GEMINI_API_KEY in your .env file")
 
-    JOB DESCRIPTION:
-    {jd_text}
+client = genai.Client(api_key=api_key)
 
-    Return a JSON object with these exact keys:
-    - "score": (Integer 0-100 based on ATS compatibility and skill match)
-    - "tier": (Single letter: S, A, B, C, or F)
-    - "summary": (A sharp, 1-sentence professional critique explaining the score)
-    - "missing_skills": [List of 3-5 important missing keywords]
-    """
+@app.route('/')
+def index():
+    return render_template('home.html')
 
-    # Generate content using the new SDK syntax
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=prompt,
-        config={
-            'response_mime_type': 'application/json',
-        }
-    )
-#hello 
-    # The new SDK returns the response text directly; we parse it to JSON
-    return json.loads(response.text)
+# Chat Route (for general questions)
+@app.route("/chat", methods=["POST"])
+def chat():
+    try:
+        data = request.json
+        prompt = data.get("message")
+        
+        # Using the specific stable version to avoid 404 errors
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
+        return jsonify({"response": response.text})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-# ==============================
-# API ROUTE
-# ==============================
-@app.route("/api/analyze", methods=["POST"])
+# ATS Analysis Route
+@app.route("/analyze", methods=["POST"])
 def analyze():
     try:
-        data = request.get_json()
+        if 'file' not in request.files:
+            return jsonify({"error": "No file uploaded"}), 400
         
-        if not data:
-            return jsonify({"error": "No data provided"}), 400
-            
-        resume_text = data.get("resumeText")
-        jd_text = data.get("jobDescription")
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({"error": "No file selected"}), 400
 
-        if not resume_text or not jd_text:
-            return jsonify({"error": "Missing resume text or job description"}), 400
+        # 1. Extract Text from PDF
+        pdf_reader = PyPDF2.PdfReader(file)
+        resume_text = ""
+        for page in pdf_reader.pages:
+            resume_text += page.extract_text()
 
-        # Execute Analysis
-        result = get_ats_analysis(resume_text, jd_text)
+        # 2. PROS & CONS PROMPT
+        ats_prompt = f"""
+        Act as an expert ATS (Applicant Tracking System) Scanner. 
+        Analyze the following resume text.
+        
+        Output the response in this EXACT Markdown format:
 
-        return jsonify(result)
+        # 🛡️ ATS Report
+        
+        ## 📊 Match Score: [Score]/100
+        
+        ## ✅ Pros
+        * [List the resume's top strengths]
+        * [List specific good keywords found]
+        
+        ## ❌ Cons
+        * [List formatting errors or missing sections]
+        * [List missing critical skills]
+        
+        ## 💡 Final Verdict
+        [One sentence summary]
+
+        RESUME TEXT:
+        {resume_text}
+        """
+
+        # 3. Generate Analysis
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=ats_prompt
+        )
+        
+        return jsonify({"response": response.text})
 
     except Exception as e:
-        print(f"Neural Engine Error: {str(e)}")
-        return jsonify({"error": f"Neural link unstable: {str(e)}"}), 500
+        print(f"Error: {e}")
+        return jsonify({"error": "Failed to process file. Ensure it is a valid PDF."}), 500
 
-# ==============================
-# RUN SERVER
-# ==============================
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

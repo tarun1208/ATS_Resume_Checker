@@ -6,8 +6,8 @@
     <title>OptiScan Elite | AI Resume Intelligence & ATS Optimization</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Updated PDF.js to a stable version with corresponding worker -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <!-- Marked.js to handle the Markdown from your backend -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -29,8 +29,7 @@
 
         #particle-canvas {
             position: fixed;
-            top: 0;
-            left: 0;
+            top: 0; left: 0;
             z-index: -1;
             opacity: 0.3;
         }
@@ -62,12 +61,6 @@
             box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.5);
         }
 
-        .premium-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            filter: grayscale(1);
-        }
-
         .scan-laser {
             position: absolute;
             width: 100%;
@@ -84,17 +77,6 @@
             100% { top: 100%; opacity: 0; }
         }
 
-        .metric-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.3s ease;
-        }
-
-        .metric-card:hover {
-            border-color: var(--gold);
-            background: rgba(245, 158, 11, 0.03);
-        }
-
         .tab-btn {
             border-bottom: 2px solid transparent;
             transition: all 0.3s ease;
@@ -105,23 +87,11 @@
             color: white;
         }
 
-        .modification-card {
-            border-left: 4px solid var(--gold);
-            background: rgba(245, 158, 11, 0.03);
-        }
-
-        .upload-active {
-            border-color: var(--gold) !important;
-            background: rgba(245, 158, 11, 0.05) !important;
-        }
-
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
-
-        .priority-high { border-left-color: #ef4444; }
-        .priority-medium { border-left-color: #f59e0b; }
-        .priority-low { border-left-color: #10b981; }
+        /* Custom Markdown styling for the parsed results */
+        .markdown-res h2 { font-weight: 800; text-transform: uppercase; font-size: 0.75rem; color: var(--gold); margin-top: 1.5rem; letter-spacing: 0.1em; }
+        .markdown-res ul { margin-top: 0.5rem; space-y: 0.5rem; }
+        .markdown-res li { color: #a1a1aa; font-size: 0.875rem; position: relative; padding-left: 1.25rem; margin-bottom: 0.25rem; }
+        .markdown-res li::before { content: "→"; position: absolute; left: 0; color: var(--gold); }
     </style>
 </head>
 <body>
@@ -137,13 +107,9 @@
                 </div>
                 <span class="text-2xl font-black tracking-tighter uppercase italic text-white">Opti<span class="text-yellow-500">Scan</span></span>
             </div>
-            <div class="flex items-center gap-10">
-                <div class="hidden lg:flex items-center gap-8 text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">
-                    <a href="#scanner" class="hover:text-yellow-500 transition-all">Analysis</a>
-                    <a href="#results" class="hover:text-yellow-500 transition-all">Scorecard</a>
-                    <a href="#" class="hover:text-yellow-500 transition-all">Pro Tips</a>
-                </div>
-                <a href="#scanner" class="px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest border border-yellow-500/20 text-yellow-500 hover:bg-yellow-500 hover:text-black transition-all">Analyze Now</a>
+            <div class="hidden lg:flex items-center gap-8 text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">
+                <a href="#scanner" class="hover:text-yellow-500 transition-all">Scanner</a>
+                <a href="#results" class="hover:text-yellow-500 transition-all">Analysis</a>
             </div>
         </div>
     </nav>
@@ -151,13 +117,13 @@
     <!-- Hero -->
     <section class="relative pt-64 pb-32 px-8 flex flex-col items-center text-center">
         <div class="inline-flex items-center gap-3 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-[0.3em] mb-12">
-            <i data-lucide="sparkles" class="w-4 h-4"></i> Neural Professional Audit Engine
+            <i data-lucide="sparkles" class="w-4 h-4"></i> Professional Neural Audit
         </div>
         <h1 class="text-7xl md:text-[8rem] font-black tracking-tighter text-white mb-10 leading-[0.8]">
             The <span class="gold-text-glow">Gold Standard.</span>
         </h1>
         <p class="text-xl md:text-2xl text-zinc-500 max-w-4xl mx-auto leading-relaxed font-light mb-16">
-            Upload your resume for an instant, high-fidelity audit. We use neural semantic matching to identify impact gaps and brevity errors.
+            Upload your resume for a high-fidelity audit. We use Gemini 2.5 Flash to identify impact gaps and brevity errors instantly.
         </p>
     </section>
 
@@ -166,53 +132,32 @@
         <div class="glass-panel p-2 rounded-[4rem] relative overflow-hidden">
             <div class="p-12 space-y-12">
                 <div class="text-center space-y-4">
-                    <h2 class="text-4xl font-black text-white uppercase italic tracking-tighter">Initiate Neural Uplink</h2>
-                    <p class="text-zinc-500 text-xs font-bold uppercase tracking-widest">Drop your file to begin instant analysis</p>
+                    <h2 class="text-4xl font-black text-white uppercase italic tracking-tighter">Initiate Audit</h2>
+                    <p class="text-zinc-500 text-xs font-bold uppercase tracking-widest">Drop your PDF to begin neural analysis</p>
                 </div>
 
                 <!-- Central Upload Area -->
-                <div id="drop-zone" class="relative group cursor-pointer border-2 border-dashed border-white/10 rounded-[3rem] bg-white/[0.02] p-24 text-center transition-all hover:border-yellow-500/30 hover:bg-white/[0.04]">
+                <div id="drop-zone" class="relative group cursor-pointer border-2 border-dashed border-white/10 rounded-[3rem] bg-white/[0.02] p-24 text-center transition-all hover:border-yellow-500/30">
                     <div id="laser" class="hidden scan-laser"></div>
                     <div class="flex flex-col items-center gap-8 relative z-10">
-                        <div id="upload-icon-container" class="w-24 h-24 bg-zinc-900 rounded-[2.5rem] flex items-center justify-center text-yellow-500 shadow-3xl border border-white/5 group-hover:scale-110 transition-all">
+                        <div id="upload-icon-container" class="w-24 h-24 bg-zinc-900 rounded-[2.5rem] flex items-center justify-center text-yellow-500 shadow-3xl border border-white/5">
                             <i data-lucide="file-up" class="w-12 h-12"></i>
                         </div>
                         <div class="space-y-4">
-                            <p id="upload-prompt" class="text-3xl font-black text-white tracking-tight uppercase italic">Select Resume Source</p>
-                            <div class="flex items-center justify-center gap-4 text-[10px] text-zinc-600 font-bold uppercase tracking-widest">
-                                <span>PDF</span>
-                                <span class="w-1 h-1 bg-zinc-800 rounded-full"></span>
-                                <span>DOCX</span>
-                                <span class="w-1 h-1 bg-zinc-800 rounded-full"></span>
-                                <span>TXT</span>
-                            </div>
+                            <p id="upload-prompt" class="text-3xl font-black text-white tracking-tight uppercase italic">Select PDF Source</p>
+                            <p class="text-[10px] text-zinc-600 font-bold uppercase tracking-widest">Targeting Gemini 2.5 Flash Node</p>
                         </div>
                     </div>
-                    <input type="file" id="file-input" class="hidden" accept=".pdf,.doc,.docx,.txt">
-                </div>
-
-                <!-- Optional Targeting Field -->
-                <div class="space-y-6 max-w-2xl mx-auto">
-                    <div class="flex items-center justify-between px-2">
-                        <label class="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Optional: Target Job (For Match Score)</label>
-                        <span id="target-status" class="text-[10px] font-bold text-yellow-500 uppercase italic opacity-0">Target Set</span>
-                    </div>
-                    <textarea 
-                        id="job-desc"
-                        class="w-full h-32 rounded-[2rem] p-8 bg-black/40 border border-white/5 focus:ring-1 focus:ring-yellow-500/30 focus:border-yellow-500/30 outline-none transition-all resize-none text-sm font-medium leading-relaxed placeholder:text-zinc-800 text-zinc-400"
-                        placeholder="Paste target job specifications here to optimize for a specific role..."></textarea>
+                    <input type="file" id="file-input" class="hidden" accept=".pdf">
                 </div>
 
                 <div class="flex flex-col items-center gap-6">
-                    <button 
-                        onclick="analyze()"
-                        id="scan-btn"
-                        class="w-full max-w-md py-7 premium-btn rounded-[2.5rem] text-sm uppercase tracking-[0.4em] flex items-center justify-center gap-4 group">
+                    <button onclick="analyze()" id="scan-btn" class="w-full max-w-md py-7 premium-btn rounded-[2.5rem] text-sm uppercase tracking-[0.4em] flex items-center justify-center gap-4 group disabled:opacity-50">
                         <i data-lucide="cpu" class="w-5 h-5 group-hover:rotate-180 transition-transform duration-700"></i>
-                        Initialize Full Audit
+                        Run Neural Scan
                     </button>
-                    <div id="file-feedback" class="flex items-center gap-3 opacity-0 transition-opacity duration-300">
-                        <i id="file-status-icon" data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i>
+                    <div id="file-feedback" class="flex items-center gap-3 opacity-0 transition-opacity">
+                        <i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i>
                         <span id="filename" class="text-[10px] font-black text-zinc-500 uppercase tracking-widest italic">Source Synced</span>
                     </div>
                 </div>
@@ -237,80 +182,24 @@
                 </div>
                 <div class="flex-1 space-y-4 text-center lg:text-left">
                     <div class="inline-block px-4 py-1.5 bg-yellow-500/10 border border-yellow-500/20 rounded-full">
-                        <span class="text-[10px] font-black text-yellow-500 uppercase tracking-widest italic">Tier <span id="tier-val">?</span> Result</span>
+                        <span class="text-[10px] font-black text-yellow-500 uppercase tracking-widest italic">AI Analysis Complete</span>
                     </div>
-                    <h3 id="summary-val" class="text-3xl font-bold text-white leading-tight">Neural Intelligence Summary Loading...</h3>
-                    <p class="text-zinc-500 text-sm italic">Audit based on industry-standard resume architecture and semantic alignment.</p>
+                    <h3 id="verdict-val" class="text-3xl font-bold text-white leading-tight">Syncing intelligence...</h3>
                 </div>
             </div>
 
-            <!-- Detailed Metrics Grid -->
-            <div class="grid md:grid-cols-4 gap-6">
-                <div class="metric-card p-8 rounded-[3rem] text-center">
-                    <p class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-4">Impact</p>
-                    <p id="impact-score" class="text-4xl font-black text-white">--</p>
-                    <div class="w-full h-1 bg-zinc-900 mt-4 rounded-full overflow-hidden">
-                        <div id="impact-bar" class="h-full bg-emerald-500 w-0 transition-all duration-1000"></div>
-                    </div>
+            <!-- Content Tabs -->
+            <div class="space-y-6">
+                <div class="flex gap-10 border-b border-white/5 pb-2">
+                    <button onclick="switchTab('report')" id="tab-report" class="tab-btn active px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-zinc-500 hover:text-white">Full Report</button>
+                    <button onclick="switchTab('raw')" id="tab-raw" class="tab-btn px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-zinc-500 hover:text-white">AI Verdict</button>
                 </div>
-                <div class="metric-card p-8 rounded-[3rem] text-center">
-                    <p class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-4">Brevity</p>
-                    <p id="brevity-score" class="text-4xl font-black text-white">--</p>
-                    <div class="w-full h-1 bg-zinc-900 mt-4 rounded-full overflow-hidden">
-                        <div id="brevity-bar" class="h-full bg-yellow-500 w-0 transition-all duration-1000"></div>
-                    </div>
-                </div>
-                <div class="metric-card p-8 rounded-[3rem] text-center">
-                    <p class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-4">Keywords</p>
-                    <p id="keyword-score" class="text-4xl font-black text-white">--</p>
-                    <div class="w-full h-1 bg-zinc-900 mt-4 rounded-full overflow-hidden">
-                        <div id="keyword-bar" class="h-full bg-blue-500 w-0 transition-all duration-1000"></div>
-                    </div>
-                </div>
-                <div class="metric-card p-8 rounded-[3rem] text-center">
-                    <p class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-4">Style</p>
-                    <p id="style-score" class="text-4xl font-black text-white">--</p>
-                    <div class="w-full h-1 bg-zinc-900 mt-4 rounded-full overflow-hidden">
-                        <div id="style-bar" class="h-full bg-purple-500 w-0 transition-all duration-1000"></div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Navigation Tabs -->
-            <div class="flex gap-10 border-b border-white/5 pb-2">
-                <button onclick="switchTab('action')" id="tab-act" class="tab-btn active px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-zinc-500 hover:text-white">Action Plan</button>
-                <button onclick="switchTab('optimization')" id="tab-opt" class="tab-btn px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-zinc-500 hover:text-white">Line Audit</button>
-                <button onclick="switchTab('keywords')" id="tab-key" class="tab-btn px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-zinc-500 hover:text-white">Keywords</button>
-                <button onclick="switchTab('brevity')" id="tab-bre" class="tab-btn px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-zinc-500 hover:text-white">Architecture</button>
-            </div>
-
-            <!-- Tab Content: Action Plan (NEW) -->
-            <div id="content-action" class="tab-content space-y-8">
-                <div class="space-y-6" id="action-plan-container">
-                    <!-- Actionable steps will be injected here -->
+                <div id="content-report" class="tab-content glass-panel p-12 rounded-[4rem] markdown-res">
+                    <!-- Parsed report goes here -->
                 </div>
-            </div>
-
-            <!-- Tab Content: Optimization -->
-            <div id="content-optimization" class="tab-content hidden space-y-8">
-                <div id="optimization-container" class="space-y-6">
-                    <div class="text-center py-20 text-zinc-700 italic">No modifications suggested yet.</div>
-                </div>
-            </div>
-
-            <!-- Tab Content: Keywords -->
-            <div id="content-keywords" class="tab-content hidden space-y-8">
-                <div class="glass-panel p-12 rounded-[4rem]">
-                    <h4 class="text-xl font-bold text-white mb-8 italic uppercase tracking-tighter">Gap Analysis</h4>
-                    <div id="feedback-chips" class="flex flex-wrap gap-4"></div>
-                    <p class="mt-10 text-sm text-zinc-500 italic">Keywords missing from your professional narrative.</p>
-                </div>
-            </div>
-
-            <!-- Tab Content: Structural -->
-            <div id="content-brevity" class="tab-content hidden space-y-8">
-                <div class="glass-panel p-12 rounded-[4rem] space-y-8">
-                    <div id="checklist-container" class="grid md:grid-cols-2 gap-6"></div>
+                <div id="content-raw" class="tab-content hidden glass-panel p-12 rounded-[4rem] text-zinc-400 italic text-sm leading-relaxed">
+                    <!-- Final Verdict text goes here -->
                 </div>
             </div>
         </div>
@@ -318,14 +207,9 @@
 
     <!-- Footer -->
     <footer class="p-20 text-center border-t border-white/5 bg-black">
-        <div class="flex items-center justify-center gap-3 mb-8">
-            <div class="p-2 bg-yellow-500 rounded-xl"><i data-lucide="zap" class="text-black w-4 h-4"></i></div>
-            <span class="text-xl font-black tracking-tighter uppercase italic text-white">Opti<span class="text-yellow-500">Scan</span></span>
-        </div>
-        <p class="text-[10px] font-black text-zinc-600 uppercase tracking-[0.5em]">Neural ATS Intelligence Platform &copy; 2026</p>
+        <p class="text-[10px] font-black text-zinc-600 uppercase tracking-[0.5em]">Neural Intelligence &copy; 2026</p>
     </footer>
 
-    <!-- Gradient Definitions -->
     <svg width="0" height="0">
         <defs>
             <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -336,7 +220,6 @@
     </svg>
 
     <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         lucide.createIcons();
 
         // Particle Engine
@@ -346,7 +229,7 @@
         function initParticles() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             particles = [];
-            for (let i = 0; i < 60; i++) {
+            for (let i = 0; i < 50; i++) {
                 particles.push({
                     x: Math.random() * canvas.width, y: Math.random() * canvas.height,
                     size: Math.random() * 2, speedX: Math.random() * 0.4 - 0.2,
@@ -365,206 +248,98 @@
             requestAnimationFrame(drawParticles);
         }
         window.addEventListener('load', () => { initParticles(); drawParticles(); });
-        window.addEventListener('resize', initParticles);
 
-        // Core App Logic
-        let currentText = "";
-        const BACKEND_URL = "http://127.0.0.1:5000/api/analyze";
-
+        // App Logic
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
-        const jobDesc = document.getElementById('job-desc');
-
+        
         dropZone.onclick = () => fileInput.click();
-        dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('upload-active'); };
-        dropZone.ondragleave = () => dropZone.classList.remove('upload-active');
-        dropZone.ondrop = (e) => { e.preventDefault(); dropZone.classList.remove('upload-active'); handleFile(e.dataTransfer.files[0]); };
-        fileInput.onchange = (e) => handleFile(e.target.files[0]);
-
-        async function handleFile(file) {
-            if (!file) return;
-            
-            document.getElementById('file-feedback').style.opacity = "1";
-            document.getElementById('filename').innerText = file.name + " Synced";
-            document.getElementById('upload-prompt').innerText = "Data Stream Synced";
-            document.getElementById('laser').classList.remove('hidden');
-            lucide.createIcons();
-
-            try {
-                if (file.type === "application/pdf") {
-                    const reader = new FileReader();
-                    reader.onload = async function() {
-                        const typedarray = new Uint8Array(this.result);
-                        const pdf = await pdfjsLib.getDocument(typedarray).promise;
-                        let text = "";
-                        for (let i = 1; i <= pdf.numPages; i++) {
-                            const page = await pdf.getPage(i);
-                            const content = await page.getTextContent();
-                            text += content.items.map(item => item.str).join(' ') + "\n";
-                        }
-                        currentText = text;
-                        document.getElementById('laser').classList.add('hidden');
-                    };
-                    reader.readAsArrayBuffer(file);
-                } else {
-                    const reader = new FileReader();
-                    reader.onload = (e) => { 
-                        currentText = e.target.result; 
-                        document.getElementById('laser').classList.add('hidden');
-                    };
-                    reader.readAsText(file);
-                }
-            } catch (err) { alert("Processing error."); }
-        }
+        fileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                document.getElementById('file-feedback').style.opacity = "1";
+                document.getElementById('filename').innerText = file.name;
+            }
+        };
 
         async function analyze() {
-            if(!currentText) return alert("Please upload a resume first.");
-            
-            const jd = jobDesc.value.trim() || "General high-impact professional audit for high-level industry standards.";
+            const file = fileInput.files[0];
+            if (!file) return alert("Select a PDF first.");
+
             const btn = document.getElementById('scan-btn');
             const laser = document.getElementById('laser');
+            
             btn.disabled = true;
-            btn.innerHTML = `<i data-lucide="loader" class="animate-spin"></i> SYNCING NEURAL NODES...`;
+            btn.innerHTML = `<i data-lucide="loader" class="animate-spin"></i> Analyzing...`;
             laser.classList.remove('hidden');
             lucide.createIcons();
 
+            const formData = new FormData();
+            formData.append('file', file);
+
             try {
-                const response = await fetch(BACKEND_URL, {
+                // Fetch from your Flask endpoint /analyze
+                const response = await fetch('/analyze', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ resumeText: currentText, jobDescription: jd })
+                    body: formData
                 });
                 const data = await response.json();
-                showResults(data);
-            } catch (e) { alert("Backend offline. Check local server (port 5000)."); }
-            finally { 
-                btn.disabled = false; 
-                btn.innerHTML = `<i data-lucide="cpu" class="w-5 h-5"></i> Initialize Full Audit`; 
-                laser.classList.add('hidden'); 
-                lucide.createIcons(); 
+
+                if (data.response) {
+                    processMarkdownResponse(data.response);
+                } else {
+                    alert(data.error || "Failed to analyze.");
+                }
+            } catch (e) {
+                alert("Error connecting to backend.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i data-lucide="cpu" class="w-5 h-5"></i> Run Neural Scan`;
+                laser.classList.add('hidden');
+                lucide.createIcons();
             }
+        }
+
+        function processMarkdownResponse(markdown) {
+            // Show result section
+            const results = document.getElementById('results');
+            results.classList.remove('hidden');
+            setTimeout(() => results.classList.remove('opacity-0', 'translate-y-10'), 50);
+
+            // 1. Extract Score (Regex looks for Score/100)
+            const scoreMatch = markdown.match(/Match Score:\s*(\d+)/);
+            const score = scoreMatch ? parseInt(scoreMatch[1]) : 0;
+            
+            // 2. Extract Verdict (Last paragraph or specific section)
+            const verdictMatch = markdown.split('Final Verdict').pop();
+            const verdictText = verdictMatch ? verdictMatch.replace(/[#\*]/g, '').trim() : "Analysis finished.";
+
+            // UI Animations
+            updateGauge(score);
+            document.getElementById('verdict-val').innerText = verdictText;
+            document.getElementById('content-raw').innerText = verdictText;
+            document.getElementById('content-report').innerHTML = marked.parse(markdown);
+
+            results.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function updateGauge(score) {
+            const gauge = document.getElementById('gauge');
+            const scoreDisplay = document.getElementById('score-val');
+            gauge.style.strokeDashoffset = 534 - (score / 100) * 534;
+
+            let cur = 0;
+            const timer = setInterval(() => {
+                if(cur >= score) { scoreDisplay.innerText = score; clearInterval(timer); }
+                else { cur++; scoreDisplay.innerText = cur; }
+            }, 20);
         }
 
         function switchTab(tab) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-            const tabIdMap = { action: 'act', optimization: 'opt', keywords: 'key', brevity: 'bre' };
-            document.getElementById('tab-' + tabIdMap[tab]).classList.add('active');
+            document.getElementById('tab-' + tab).classList.add('active');
             document.getElementById('content-' + tab).classList.remove('hidden');
-        }
-
-        function showResults(data) {
-            const resultsSection = document.getElementById('results');
-            resultsSection.classList.remove('hidden');
-            setTimeout(() => resultsSection.classList.remove('opacity-0', 'translate-y-10'), 10);
-
-            // 1. Gauge & Score
-            const score = parseInt(data.score) || 0;
-            document.getElementById('gauge').style.strokeDashoffset = 534 - (score / 100) * 534;
-            let cur = 0;
-            const timer = setInterval(() => {
-                if(cur >= score) { document.getElementById('score-val').innerText = score; clearInterval(timer); }
-                else { cur++; document.getElementById('score-val').innerText = cur; }
-            }, 20);
-
-            // 2. Metrics
-            const impact = data.impact_score || Math.max(0, score - 5);
-            const brevity = data.brevity_score || Math.min(100, score + 8);
-            const keywords = data.keyword_score || Math.max(0, score - 12);
-            const style = data.style_score || 88;
-
-            document.getElementById('impact-score').innerText = impact + "%";
-            document.getElementById('impact-bar').style.width = impact + "%";
-            document.getElementById('brevity-score').innerText = brevity + "%";
-            document.getElementById('brevity-bar').style.width = brevity + "%";
-            document.getElementById('keyword-score').innerText = keywords + "%";
-            document.getElementById('keyword-bar').style.width = keywords + "%";
-            document.getElementById('style-score').innerText = style + "%";
-            document.getElementById('style-bar').style.width = style + "%";
-
-            document.getElementById('tier-val').innerText = data.tier || "B";
-            document.getElementById('summary-val').innerText = data.summary || "Audit complete.";
-
-            // 3. Keywords Tab
-            const chipContainer = document.getElementById('feedback-chips');
-            chipContainer.innerHTML = "";
-            const skills = data.missing_skills || data.keywords || [];
-            skills.forEach(kw => {
-                const chip = document.createElement('span');
-                chip.className = "px-6 py-2 rounded-2xl bg-zinc-900 border border-white/5 text-[10px] font-bold text-zinc-400 uppercase tracking-widest hover:border-yellow-500/50 hover:text-white transition-all cursor-default";
-                chip.innerText = kw;
-                chipContainer.appendChild(chip);
-            });
-
-            // 4. Optimization Tab
-            const optContainer = document.getElementById('optimization-container');
-            optContainer.innerHTML = "";
-            const mods = data.modifications || data.line_optimizations || [];
-            mods.forEach(mod => {
-                const card = document.createElement('div');
-                card.className = "modification-card p-10 rounded-[3rem] space-y-4 glass-panel";
-                card.innerHTML = `
-                    <div class="space-y-1">
-                        <span class="text-[8px] font-black text-zinc-600 uppercase tracking-widest">Original</span>
-                        <p class="text-sm text-zinc-500 italic line-through">${mod.original_line || mod.original}</p>
-                    </div>
-                    <div class="space-y-1 pt-4 border-t border-white/5">
-                        <span class="text-[8px] font-black text-emerald-500 uppercase tracking-widest">Optimized Result</span>
-                        <p class="text-lg font-bold text-white tracking-tight leading-snug">${mod.modified_line || mod.modified}</p>
-                    </div>
-                    <p class="text-[10px] text-zinc-400 font-medium leading-relaxed italic mt-4"><span class="text-yellow-500 font-black uppercase not-italic mr-2">Why:</span> ${mod.reasoning || mod.reason}</p>
-                `;
-                optContainer.appendChild(card);
-            });
-
-            // 5. Action Plan Tab (NEW logic)
-            const actionContainer = document.getElementById('action-plan-container');
-            actionContainer.innerHTML = "";
-            
-            const actions = [];
-            if (skills.length > 0) actions.push({ priority: 'high', title: 'Inject Missing Keywords', text: `ATS score is currently limited by missing semantic matches: ${skills.slice(0, 3).join(', ')}. Rewrite Experience sections to include these natively.` });
-            if (mods.length > 0) actions.push({ priority: 'medium', title: 'Optimize Experience Bullets', text: 'Multiple bullet points lack quantifiable impact. Use the "Line Audit" tab to replace passive descriptions with data-driven achievements.' });
-            if (brevity < 70) actions.push({ priority: 'medium', title: 'Improve Document Brevity', text: 'Document word count or bullet length is exceeding industry standards. Trim experience to 3-5 bullets per role.' });
-            if (score < 50) actions.push({ priority: 'high', title: 'Critical Architecture Overhaul', text: 'Your resume score is below the competitive threshold. Prioritize the high-impact modifications suggested in the Line Audit immediately.' });
-            
-            actions.forEach(act => {
-                const card = document.createElement('div');
-                card.className = `p-8 rounded-[3rem] glass-panel border-l-8 ${act.priority === 'high' ? 'priority-high' : 'priority-medium'}`;
-                card.innerHTML = `
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-[8px] font-black uppercase tracking-[0.3em] ${act.priority === 'high' ? 'text-red-500' : 'text-yellow-500'}">${act.priority} Priority Task</span>
-                        <i data-lucide="arrow-right-circle" class="w-4 h-4 text-zinc-700"></i>
-                    </div>
-                    <h4 class="text-xl font-black text-white italic uppercase tracking-tighter mb-2">${act.title}</h4>
-                    <p class="text-sm text-zinc-400 leading-relaxed">${act.text}</p>
-                `;
-                actionContainer.appendChild(card);
-            });
-
-            // 6. Checklist Tab
-            const checklistContainer = document.getElementById('checklist-container');
-            checklistContainer.innerHTML = "";
-            const checks = [
-                { label: "Neural Keyword Density", status: keywords > 60 },
-                { label: "Action-Oriented Verbs", status: impact > 70 },
-                { label: "Brevity Filter Passed", status: brevity > 80 },
-                { label: "Single-Column Architecture", status: true },
-                { label: "Quantifiable Impact", status: score > 65 },
-                { label: "Contact Intelligence", status: true }
-            ];
-            checks.forEach(c => {
-                const item = document.createElement('div');
-                item.className = "flex items-center justify-between p-4 rounded-2xl bg-zinc-900/50 border border-white/5";
-                item.innerHTML = `
-                    <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">${c.label}</span>
-                    <i data-lucide="${c.status ? 'check' : 'x'}" class="w-4 h-4 ${c.status ? 'text-emerald-500' : 'text-red-500'}"></i>
-                `;
-                checklistContainer.appendChild(item);
-            });
-
-            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            lucide.createIcons();
-            switchTab('action'); // Default to action plan after scan
         }
     </script>
 </body>

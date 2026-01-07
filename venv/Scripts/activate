@@ -35,7 +35,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\Tarun\Desktop\ATS\venv"
+VIRTUAL_ENV="C:\Users\Tarun\Desktop\ATS_Resume_Checker\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
