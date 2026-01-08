@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# ATS_Resume_Checker
-=======
 Python
 # 🛡️ AI Resume ATS Scanner
 
@@ -126,4 +123,3 @@ Fix: Ensure you activated your virtual environment (Step 2) before running the a
 
 📄 License
 This project is open-source and available under the MIT License.
->>>>>>> b5eaf5c82ff0751f173ed09531720c77ef2dabd5
