@@ -10,7 +10,7 @@ An intelligent web application that helps job seekers optimize their resumes. It
 ## 🚀 Features
 
 * **PDF Analysis:** Robust text extraction from PDF resumes using `PyPDF2`.
-* **AI-Powered Feedback:** Uses `gemini-1.5-flash-001` to generate human-like critiques.
+* **AI-Powered Feedback:** Uses `gemini-2.5-flash` to generate human-like critiques.
 * **Scoring System:** Provides a Match Score out of 100.
 * **Smart UI:** Clean, responsive interface with automatic color-coding for Pros (Green) and Cons (Red).
 * **Secure:** API keys are protected using environment variables.
@@ -106,11 +106,10 @@ Wait a few seconds for the AI to generate the report.
 ai-resume-scanner/
 ├── main.py              # Main Flask application logic
 ├── .env                 # Local secrets (DO NOT commit)
-├── .env.example         # Placeholder values (commit this)
 ├── .gitignore           # Prevents .env and venv from being uploaded
 ├── requirements.txt     # List of dependencies
 └── templates/
-    └── index.html       # Frontend UI
+    └── home.html       # Frontend UI
 ```
 🐛 Troubleshooting
 Error: 404 models/gemini-2.5-flash not found
